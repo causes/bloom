@@ -1,0 +1,7 @@
+here is a sentence
+here is another sentenze
+my name is xenexxq
+what is your name buddy
+exit
+end
+quit
