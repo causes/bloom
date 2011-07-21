@@ -1,0 +1,12 @@
+An implementation of a bloom filter in C. Also contains an ad-hoc command line
+spell checker application (as a test).
+
+To compile:
+
+    $ gcc -o spellcheck spellcheck.c bloom.c
+
+To run:
+
+    $ cat data.txt | ./spellcheck
+
+
