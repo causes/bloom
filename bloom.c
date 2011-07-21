@@ -12,6 +12,7 @@
 #include <stdarg.h>
 
 #include "bloom.h"
+#include "hashes.h"
 
 #define SETBIT(bitset, i) (bitset[i / CHAR_BIT] |= (1 << (i % CHAR_BIT)))
 #define GETBIT(bitset, i) (bitset[i / CHAR_BIT]  & (1 << (i % CHAR_BIT)))
@@ -28,13 +29,12 @@ struct _bloom_t
 };
 
 /**
- * Allocate a new bloom filter
+ * Internal bloom filter builder function
  */
-bloom_t *bloom_filter_new(size_t size, size_t num_functions, ...)
+bloom_t *bloom_filter_builder(size_t size, size_t num_functions, ...)
 {
     bloom_t *filter;
     va_list valist;
-    int n;
     if (!(filter = malloc(sizeof(bloom_t)))) {
         return NULL;
     }
@@ -48,8 +48,8 @@ bloom_t *bloom_filter_new(size_t size, size_t num_functions, ...)
         return NULL;
     }
     va_start(valist, num_functions);
-    for (n = 0; n < num_functions; ++n) {
-        filter->functions[n] = va_arg(valist, bloom_hashfunc);
+    int i; for (i = 0; i < num_functions; ++i) {
+        filter->functions[i] = va_arg(valist, bloom_hashfunc);
     }
     va_end(valist);
     filter->num_functions = num_functions;
@@ -58,21 +58,31 @@ bloom_t *bloom_filter_new(size_t size, size_t num_functions, ...)
 }
 
 /**
+ * Allocate a new bloom filter
+ */
+bloom_t *bloom_filter_new(size_t size)
+{
+    return bloom_filter_builder(
+        size, 4, jenkins_hash, murmur_hash, sax_hash, sdbm_hash);
+}
+
+
+/**
  * Free and allocated bloom filter
  */
 int bloom_filter_free(bloom_t *filter)
 {
-    if (filter) {
-        if (filter->bitset) {
-            free(filter->bitset);
-        }
-        if (filter->functions) {
-            free(filter->functions);
-        }
-        free(filter);
-        return 1;
+    if (!filter) {
+        return 0;
     }
-    return 0;
+    if (filter->bitset) {
+        free(filter->bitset);
+    }
+    if (filter->functions) {
+        free(filter->functions);
+    }
+    free(filter);
+    return 1;
 }
 
 /**
