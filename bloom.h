@@ -26,7 +26,7 @@ typedef struct _bloom_t bloom_t;
 /**
  * Allocate a new bloom filter
  */
-bloom_t *bloom_filter_new(size_t, size_t, ...);
+bloom_t *bloom_filter_new(size_t);
 
 /**
  * Free and allocated bloom filter

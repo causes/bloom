@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "bloom.h"
-#include "hashes.h"
 
 /**
  * Strip '\r' or '\n' chars from a string
@@ -41,8 +40,7 @@ int main(int argc, char *argv[])
     }
 
     // Create a bloom filter
-    bloom_t *filter = bloom_filter_new(
-        2500000, 4, jenkins_hash, murmur_hash, sax_hash, sdbm_hash);
+    bloom_t *filter = bloom_filter_new(2500000);
 
     // Add all dictionary words to the filter
     char *p;
