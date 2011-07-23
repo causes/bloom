@@ -10,7 +10,6 @@
  */
 #include <stdio.h>
 #include <string.h>
-
 #include "bloom.h"
 #include "hashes.h"
 
@@ -53,6 +52,8 @@ int main(int argc, char *argv[])
         bloom_filter_add(filter, line);
     }
     fclose(fp);
+    printf("bloom filter count : %u\n", bloom_filter_count(filter));
+    printf("bloom filter size  : %u\n", bloom_filter_size(filter));
 
     // Read words from stdin and print those words not in the bloom filter
     while (fgets(line, 1024, stdin)) {

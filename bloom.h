@@ -8,8 +8,8 @@
  * ------------  ---------------  ----------------------------------------------
  * Jul 20, 2011  Dave Pederson    Creation
  */
-#ifndef __BLOOM_H__
-#define __BLOOM_H__
+#ifndef __BLOOM_H_INCLUDED__
+#define __BLOOM_H_INCLUDED__
 
 #include <stdlib.h>
 
@@ -43,6 +43,15 @@ int bloom_filter_add(bloom_t*, const char*);
  */
 int bloom_filter_contains(bloom_t*, const char*);
 
+/**
+ * The number of keys in the bloom filter
+ */
+size_t bloom_filter_count(bloom_t*);
 
-#endif // __BLOOM_H__
+/**
+ * The size of the bloom filter
+ */
+size_t bloom_filter_size(bloom_t*);
 
+
+#endif // __BLOOM_H_INCLUDED__

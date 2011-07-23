@@ -10,7 +10,6 @@
  */
 #include <limits.h>
 #include <stdarg.h>
-
 #include "bloom.h"
 
 #define SETBIT(bitset, i) (bitset[i / CHAR_BIT] |= (1 << (i % CHAR_BIT)))
@@ -23,6 +22,7 @@ struct _bloom_t
 {
     unsigned char *bitset;     // The bitset data structure
     size_t size;               // The size of the bitset
+    size_t count;              // The number of keys in the bloom filter
     bloom_hashfunc *functions; // The array of hash function pointers
     size_t num_functions;      // The number of hash function pointers
 };
@@ -54,6 +54,7 @@ bloom_t *bloom_filter_new(size_t size, size_t num_functions, ...)
     va_end(valist);
     filter->num_functions = num_functions;
     filter->size = size;
+    filter->count = 0;
     return filter;
 }
 
@@ -62,17 +63,17 @@ bloom_t *bloom_filter_new(size_t size, size_t num_functions, ...)
  */
 int bloom_filter_free(bloom_t *filter)
 {
-    if (filter) {
-        if (filter->bitset) {
-            free(filter->bitset);
-        }
-        if (filter->functions) {
-            free(filter->functions);
-        }
-        free(filter);
-        return 1;
+    if (!filter) {
+        return 0;
     }
-    return 0;
+    if (filter->bitset) {
+        free(filter->bitset);
+    }
+    if (filter->functions) {
+        free(filter->functions);
+    }
+    free(filter);
+    return 1;
 }
 
 /**
@@ -86,6 +87,7 @@ int bloom_filter_add(bloom_t *filter, const char *key)
     int i; for (i = 0; i < filter->num_functions; ++i) {
         SETBIT(filter->bitset, filter->functions[i](key) % filter->size);
     }
+    ++(filter->count);
     return 1;
 }
 
@@ -105,3 +107,18 @@ int bloom_filter_contains(bloom_t *filter, const char *key)
     return 1;
 }
 
+/**
+ * The number of keys in the bloom filter
+ */
+size_t bloom_filter_count(bloom_t *filter)
+{
+    return filter->count;
+}
+
+/**
+ * The size of the bloom filter
+ */
+size_t bloom_filter_size(bloom_t *filter)
+{
+    return filter->size;
+}

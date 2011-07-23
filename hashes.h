@@ -8,8 +8,8 @@
  * ------------  ---------------  ----------------------------------------------
  * Jul 20, 2011  Dave Pederson    Creation
  */
-#ifndef __HASHES_INCLUDED__
-#define __HASHES_INCLUDED__
+#ifndef __HASHES_H_INCLUDED__
+#define __HASHES_H_INCLUDED__
 
 #include <string.h>
 
@@ -98,5 +98,5 @@ static unsigned jenkins_hash(const char *key)
     return hash;
 }
 
-#endif
 
+#endif // __HASHES_H_INCLUDED__
